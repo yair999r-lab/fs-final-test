@@ -1,4 +1,4 @@
-import { useNavigate, NavLink } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useHandelFatch } from "../hooks/Fatchhook"
 
 interface user {
