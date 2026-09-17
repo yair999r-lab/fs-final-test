@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-export function handelFatch<T>(
+export function useHandelFatch<T>(
   url: string,
   method: string,
   userInfo: any | null,
 ) {
-
+  
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -13,8 +13,8 @@ export function handelFatch<T>(
     const strifi = userInfo ? JSON.stringify(userInfo) : null;
 
   useEffect(() => {
+    console.log(userInfo)
     if (!url) return;
-
     const options: RequestInit = {
       method: method,
       headers: { "Content-Type": "application/json" },

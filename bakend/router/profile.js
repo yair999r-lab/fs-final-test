@@ -6,25 +6,28 @@ dotenv.config()
 import { USERS } from "../app.js"
 
 import cookieParser from "cookie-parser"
+import { loadFile } from "../db/fileHendler.js"
 
 export const profileRouter = express.Router()
 
 profileRouter.use(cookieParser())
 
-profileRouter.get("/profile", (req, res, next) =>{
-    const token = req.cookies?.token
-    
+profileRouter.post("/profile", async (req, res, next) =>{
+    const auto = req.body.Authorization
+    const token = auto.split(' ')[1]
     if(!token){
         const error = new Error("token not send")
-        error.status = 400
+        error.status = 403
         return next(error)
     }
 
     try {
+        console.log(token)
         const decodet = jwt.verify(token, process.env.JSON_WEB_TOKEN)
         req.user = decodet
 
-        const user = USERS.find(u => u.id === req.user.userId)
+        const users = await loadFile()
+        const user = users.find(u => u.id === req.user.userId)
         res.status(200).json({meassge: "user accessed", user: user})
 
     } catch (error) {

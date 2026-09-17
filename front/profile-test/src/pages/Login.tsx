@@ -1,11 +1,10 @@
 import { useState } from "react"
 import { useHandelFatch } from "../hooks/Fatchhook"
-import { NavLink } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
-interface sigup {
-    username: string,
-    password: string,
-    email: string
+interface login {
+    email: string,
+    password: string
 }
 
 interface getDate {
@@ -13,41 +12,36 @@ interface getDate {
     token: string
 }
 
-const Sigup = () => {
-
-    const [name, setName] = useState("")
+const Login = () => {
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
-    const [userInfo, setUserInfo] = useState<sigup | null>(null)
-    
+
+    const [userInfo, setUserInfo] = useState<login | null>(null)
+    const navigate = useNavigate()
     const [url, setUrl] = useState("")
-    
-    
-    const {data, loading, error} = useHandelFatch<getDate>(url, "POST", userInfo)
         
+        
+    const {data, loading, error} = useHandelFatch<getDate>(url, "POST", userInfo)
+            
     function heandleForm(){
-        setUserInfo({username: name, password, email})
-        setUrl("http://localhost:3000/sigup")
+        setUserInfo({ password, email})
+        setUrl("http://localhost:3000/login")
     }
 
     if(loading) return <h4>loading</h4>
-    
-    if(data) { 
+    if(data) {
+        console.log(data)
         const token = data.token
         localStorage.setItem("token", token)
-        return(
-    <div>
-        <NavLink to="/profile" >profile</NavLink>
-        <NavLink to="/">logout</NavLink>
-    </div>)}
+        navigate("/profile")
+    }
   return (
     <div>
         {error && <h4>{error}</h4>}
-        <h3>sigup</h3>
+         <h3>login</h3>
         <form onSubmit={(e) => {
             e.preventDefault()
             heandleForm()}}>
-            <label>full name<input type="text" name='name' value={name} onChange={(e) => setName(e.target.value)} required/></label>
             <label>password <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required/></label>
             <label>email <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required/></label>
             <button type='submit'>send</button>
@@ -56,4 +50,4 @@ const Sigup = () => {
   )
 }
 
-export default Sigup
+export default Login

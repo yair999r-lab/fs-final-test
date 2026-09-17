@@ -14,28 +14,34 @@ export const loginRouter = express.Router();
 
 loginRouter.post("/login", async (req, res, next) => {
   try {
-    const { username, password, email } = req.body;
-
-    const user = findUserPassword(email);
+    const { password, email } = req.body;
+    
+    const user = await findUserPassword(email);
+    if(!user){
+        const err = new Error("user not exists")
+        err.status = 400
+        next(err)
+    }
+    console.log(user)
     const isMatch = await bcrypt.compare(password, user.password);
-
+    console.log(isMatch)
     if (!isMatch) {
       const err = new Error("password not match");
-      err.status = 403;
-      next(err);
+      err.status = 402;
+      next(err)
     }
-
     const token = jwt.sign({ userId: user.id }, process.env.JSON_WEB_TOKEN, {
       expiresIn: "1h",
     });
 
-    console.log(USERS);
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: true,
     });
-    res.status(201).send("uset login sccsfuly");
+
+    res.status(200).json({message: "uset login sccsfuly", token});
   } catch (error) {
     next(error);
   }

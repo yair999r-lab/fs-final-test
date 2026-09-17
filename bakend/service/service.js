@@ -1,19 +1,20 @@
 import { USERS } from "../app.js"  
+import { loadFile, saveFile } from "../db/fileHendler.js"
 
 
 export async function addNewUser(username, password, email) {
-    const id = USERS.length + 1
-    USERS.push({username, password, email, id})
+    const users = await loadFile()
+    const id = users.length + 1
+
+    users.push({username, password, email, id})
+    await saveFile(users)
     return id
 }
 
-export function findUserPassword(email){
-    const user = USERS.find(u => u.email === email)
-    if(!user){
-        const err = new Error("user not exists")
-        err.status = 400
-        throw(err)
-    }
-
+export async function findUserPassword(email){
+    const users = await loadFile()
+    const user = users.find(u => u.email === email)
+    
+    console.log(123457)
     return user
 }
